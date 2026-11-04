@@ -1,3 +1,33 @@
+[04/11, 05:42] Francisco: XA_TRUST_GITHUB_API_HOMOLOGATION_BATCH_2/
+├── manifest.yaml
+├── endpoint_catalog.json
+├── homologation_report.md
+├── schemas/
+│   ├── manifest.schema.json
+│   ├── endpoint_catalog.schema.json
+│   └── test_result.schema.json
+├── test_results/
+│   ├── GH-101.json
+│   ├── ...
+│   └── GH-200.json
+├── signatures/
+│   ├── manifest.sig
+│   └── verification_key.pub
+└── independent_verification/
+└── verify.py
+[04/11, 05:44] Francisco: XA_TRUST_GITHUB_API_HOMOLOGATION/
+├── manifest.yaml
+├── endpoint_catalog.json
+├── test_results/
+│   ├── GH-001.json
+│   └── ... GH-100.json
+├── raw_responses/
+├── execution_logs/
+├── artifact_hashes.sha256
+├── independent_verification/
+│   └── verify.py
+└── homologation_report.md
+
 # dsh-superagent
 
 > **Research prototype for reference only, not an official DeepSeek product.** This code grew out of our team's day-to-day development work, with much of the engineering done by coding agents. Treat it as research code, not production-ready software. It may still contain bugs, and its coding style and engineering practices may be inconsistent. Review and adapt it before using it in your own environment.
