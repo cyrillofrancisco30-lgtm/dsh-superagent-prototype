@@ -1036,6 +1036,62 @@ pytest test_close_v23.py -v
 
 
 
+xa_evidence_collector_v2_3:
+  version: v2.3
+  status: CLOSED_AS_IMPLEMENTATION_CANDIDATE
+  # NÃO é VERIFIED, NÃO é HOMOLOGATED
+  fail_closed: ENFORCED_IN_CODE
+  homologation: NOT_ESTABLISHED
+  independent_verification: NOT_ESTABLISHED
+  closed_by_suite: test_close_v23.py
+  expected_result: 19 passed
+  rule: "1 falha = NÃO FECHA"
+
+dsh_superagent:
+  classification: RESEARCH_PROTOTYPE
+  production_readiness: NOT_ESTABLISHED
+  execution_evidence: NOT_ESTABLISHED
+  note: "Research prototype for reference only, not an official DeepSeek product."
+
+integration:
+  xa_collector_with_dsh_superagent: NOT_ESTABLISHED
+  # dsh-superagent não pode se auto-verificar
+
+
+xa-evidence-collector-v2.3/
+├── collector.py          # Camada 1+2 - GitHubCollector + paginate + download_and_hash + aggregate + preserve_raw
+├── manifest.py           # Camada 3 - BLOCKED se não COMPLETE, BLOCKED se SHA disco divergir
+├── verifier.py           # Verificação independente - re-hash disco + JCS aproximação + OpenSSL
+├── test_collector.py     # 5 testes básicos fail-closed
+├── test_close_v23.py     # 19 testes de fechamento - A/B/C/D
+└── README.md             # Header de classificação + checklist + evidência upstream
+
+
+{
+  "repository": "Azure/arm-ttk",
+  "evidence_status": "DECLARED",
+  "identity_verification": "PENDING",
+  "cryptographic_verification": "NOT_ESTABLISHED",
+  "promotion_blockers": [
+    "IDENTITY_VERIFICATION_PENDING",
+    "WORKFLOW_RUN_EVIDENCE_NOT_PROVIDED",
+    "OPENSSL_EXECUTION_OUTPUT_NOT_PROVIDED",
+    "SIGNATURE_VERIFICATION_NOT_ESTABLISHED"
+  ]
+}
+
+
+# 1. No seu repo, garanta que só existem os 6 arquivos acima
+ls -1 xa-evidence-collector-v2.3/
+
+# 2. Roda fechamento
+pytest xa-evidence-collector-v2.3/test_close_v23.py -v
+pytest xa-evidence-collector-v2.3/test_collector.py -v
+
+# 3. Se 19 + 5 = 24 passed:
+# V2.3 = CLOSED_AS_IMPLEMENTATION_CANDIDATE
+
+
 
 # dsh-superagent
 
