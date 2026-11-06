@@ -1,3 +1,122 @@
+import requests
+from urllib.parse import urlparse, urljoin
+
+API_HOST = "api.github.com"
+
+ALLOWED_DOWNLOAD_HOSTS = {
+    "production-github-registry.s3.amazonaws.com",
+    "objects.githubusercontent.com",
+    "github-cloud.githubusercontent.com",
+    "codeload.github.com",
+}
+
+class GitHubCollector:
+    def __init__(self, token: str):
+        if not token or not token.strip():
+            raise ValueError("GITHUB_TOKEN obrigatório")
+
+        self.api_session = requests.Session()
+        self.api_session.headers.update({
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+        })
+
+        self.download_session = requests.Session()
+        self.download_session.headers.update({
+            "Accept": "application/octet-stream",
+        })
+
+    @staticmethod
+    def _validate_url(url: str, allowed_hosts: set):
+        parsed = urlparse(url)
+
+        if parsed.scheme != "https":
+            raise ValueError("HTTPS obrigatório")
+
+        if parsed.username or parsed.password:
+            raise ValueError("URL com credenciais embutidas bloqueada")
+
+        if parsed.port not in (None, 443):
+            raise ValueError("Porta não autorizada")
+
+        if parsed.hostname not in allowed_hosts:
+            raise ValueError(
+                f"Host não autorizado: {parsed.hostname}"
+            )
+
+        return parsed.hostname
+
+    def api_get(self, url: str):
+        self._validate_url(url, {API_HOST})
+
+        return self.api_session.get(
+            url,
+            timeout=(10, 30),
+            allow_redirects=False,
+        )
+
+    def download_get(self, url: str, max_redirects=5):
+        """
+        Download sem Authorization.
+        Valida cada destino ANTES de acessá-lo.
+        """
+
+        allowed_hosts = ALLOWED_DOWNLOAD_HOSTS
+
+        current_url = url
+
+        for _ in range(max_redirects + 1):
+            self._validate_url(current_url, allowed_hosts)
+
+            response = self.download_session.get(
+                current_url,
+                timeout=(10, 60),
+                stream=True,
+                allow_redirects=False,
+            )
+
+            if response.status_code in (301, 302, 303, 307, 308):
+                location = response.headers.get("Location")
+                response.close()
+
+                if not location:
+                    return None, {
+                        "status": "FAILED",
+                        "reason": "redirect_without_location",
+                    }
+
+                next_url = urljoin(current_url, location)
+
+                try:
+                    self._validate_url(next_url, allowed_hosts)
+                except ValueError as exc:
+                    return None, {
+                        "status": "BLOCKED",
+                        "reason": str(exc),
+                        "url": next_url,
+                    }
+
+                current_url = next_url
+                continue
+
+            if response.status_code != 200:
+                status = response.status_code
+                response.close()
+
+                return None, {
+                    "status": "FAILED",
+                    "http_status": status,
+                    "url": current_url,
+                }
+
+            return response, None
+
+        return None, {
+            "status": "FAILED",
+            "reason": "maximum_redirects_exceeded",
+        }
+
 # dsh-superagent
 
 > **Research prototype for reference only, not an official DeepSeek product.** This code grew out of our team's day-to-day development work, with much of the engineering done by coding agents. Treat it as research code, not production-ready software. It may still contain bugs, and its coding style and engineering practices may be inconsistent. Review and adapt it before using it in your own environment.
