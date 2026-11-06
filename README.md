@@ -136,6 +136,36 @@ class GitHubCollector:
             "reason": "maximum_redirects_exceeded",
         }
 
+{
+  "evidence_domain": "XA-TRUST",
+  "upstream_reference": {
+    "repository": "Azure/arm-ttk",
+    "evidence_type": "PUBLIC_COMMIT_HISTORY",
+    "observed_period": "2023-2026",
+    "claim_scope": "UPSTREAM_MAINTENANCE_HISTORY"
+  },
+  "execution_identity": {
+    "github_actor": "cyrillofrancisco30-lgtm",
+    "actor_role": "workflow_initiator",
+    "identity_verification": "PENDING"
+  },
+  "cryptographic_verification": {
+    "method": "OPENSSL_DGST_SHA256_VERIFY",
+    "manifest": "evidence-manifest.jcs.json",
+    "signature": "evidence-manifest.sig",
+    "result": "NOT_ESTABLISHED"
+  },
+  "evidence_status": "DECLARED",
+  "promotion_blockers": [
+    "IDENTITY_VERIFICATION_PENDING",
+    "WORKFLOW_RUN_EVIDENCE_NOT_PROVIDED",
+    "OPENSSL_EXECUTION_OUTPUT_NOT_PROVIDED",
+    "SIGNATURE_VERIFICATION_NOT_ESTABLISHED"
+  ]
+}
+
+
+
 # dsh-superagent
 
 > **Research prototype for reference only, not an official DeepSeek product.** This code grew out of our team's day-to-day development work, with much of the engineering done by coding agents. Treat it as research code, not production-ready software. It may still contain bugs, and its coding style and engineering practices may be inconsistent. Review and adapt it before using it in your own environment.
