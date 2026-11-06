@@ -1,3 +1,22 @@
+xa-evidence-collector-v2.3/
+├── collector.py          # Camada 1 + 2 - coleta
+├── manifest.py           # Camada 3 - SÓ depois de validação
+├── verifier.py           # Verificação independente
+├── test_collector.py      # Testes fail-closed
+└── README.md
+
+
+dsh_superagent:
+classification: RESEARCH_PROTOTYPE
+production_readiness: NOT_ESTABLISHED
+execution_evidence: NOT_ESTABLISHED
+independent_verification: NOT_ESTABLISHED
+
+xa_evidence_collector_v2_3:
+status: IMPLEMENTATION_CANDIDATE
+integration_with_dsh_superagent: NOT_ESTABLISHED
+
+
 import requests
 from urllib.parse import urlparse, urljoin
 
